@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <script src="js/jquery-1.11.3.js"></script>
+    <script src="js/Chart.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;list-style: none}
+        .box{
+            margin: 0 auto;
+            width: 600px;
+            height: 450px;
+            padding: 5px;border: 2px solid lawngreen;}
+        .hd{
+            width: 100%;
+            height: 50px;
+        }
+        .hd li{
+            float: left;
+            width: 300px;
+            height: 50px;text-align: center;
+            line-height: 50px;font-size: 20px;
+            font-weight: bolder;
+            background: #a7e6ff;
+        }
+
+        .hd li.on, .hd li:hover{
+            background:-webkit-linear-gradient(left,forestgreen,greenyellow,darkmagenta);
+            color: #fff;
+        }
+        .bd{
+            width: 600px;
+            height: 400px;
+        }
+        .bd li{
+            display: none;
+        }
+        .bd li.show{
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="box">
+    <ul class="hd">
+        <li class="on">每天情况</li>
+        <li>每周情况</li>
+    </ul>
+    <ul class="bd">
+        <li class="show"><canvas id="myChart" width="600" height="400"></canvas></li>
+        <li><canvas id="myChart2" width="600" height="400"></canvas></li>
+    </ul>
+</div>
+<!--这是静态版本-->
+<script>
+
+    var change = (function(){
+        var ary =["82%","88%","82%","89%","83%","71%","77%","97%","78%","77%","89%","82%","79%","74%","86%","81%","79%","82%","77%","97%","78%","77%","89%","82%","79%","74%","86%","81%","79%","82%"];
+        for(var i=0;i<ary.length;i++){
+            ary[i]=ary[i].replace(/(\d+)%/, function (a, b) {return +b / 100;});
+        }
+        var arr =[],len=0;
+        len=Math.ceil(ary.length/7);
+        for(var i = 0;i<len;i++){
+//            if(i=len-1){
+//
+//            }else{
+            if(i<len-1){
+                arr[i]=((Number(ary[i*7])+Number(ary[i*7+1])+Number(ary[i*7+2])+Number(ary[i*7+3])+Number(ary[i*7+4])+Number(ary[i*7]+5)+Number(ary[i*7+6]))/7).toFixed(4)
+            }else{
+                arr[i]=((Number(ary[i*7])+Number(ary[i*7+1]))/2).toFixed(4)
+            }
+//       }
+        }
+        var data = {
+            labels : ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"],
+            datasets : [
+                {
+                    fillColor : "rgba(220,220,220,0.5)",
+                    strokeColor : "rgba(220,220,220,1)",
+                    pointColor : "rgba(220,220,220,1)",
+                    pointStrokeColor : "#fff",
+                    data : ary
+                }
+            ]
+        };
+
+        var data2 = {
+            labels : ["第一周","第二周","第三周","第四周","第五周"],
+            datasets : [
+                {
+                    fillColor : "rgba(220,220,220,0.5)",
+                    strokeColor : "rgba(220,220,220,1)",
+                    pointColor : "rgba(220,220,220,1)",
+                    pointStrokeColor : "#fff",
+                    data : arr
+                }
+            ]
+        };
+        var defaults = {
+            // 刻度是否显示标签, 即Y轴上是否显示文字
+            scaleShowLabels : true,
+            // Y轴上的刻度,即文字
+            scaleLabel : "<%=value*100%>%",
+            // 字体
+            scaleFontFamily : "'Arial'",
+            // 文字大小
+            scaleFontSize : 12,
+//        axisLabel:{formatter:'{value}%'}
+        }
+        var ctx = $("#myChart").get(0).getContext("2d");
+        var myNewChart = new Chart(ctx).Line(data,defaults);
+        var ctx2 = $("#myChart2").get(0).getContext("2d");
+        var myNewChart2 = new Chart(ctx2).Line(data2,defaults);
+
+        return{
+            init:function(){
+                $('.hd li').each(function(index,item){
+                    $(item).click(function(){
+                        $('.hd li').removeClass('on');
+                        $(this).addClass('on');
+                        $('.bd li').removeClass('show').eq(index).addClass('show')
+                    })
+                })
+            }
+        }
+    })()
+change.init()
+</script>
+
+<!--这是node版本-->
+<!--<script>-->
+    <!--var change =(function(){-->
+        <!--function select(){-->
+            <!--$('.hd li').each(function(index,item){-->
+                <!--$(item).click(function(){-->
+                    <!--$('.hd li').removeClass('on');-->
+                    <!--$(this).addClass('on');-->
+                    <!--$('.bd li').removeClass('show').eq(index).addClass('show')-->
+                <!--})-->
+            <!--})-->
+        <!--}-->
+        <!--function bindList(ary){-->
+
+            <!--for(var i=0;i<ary.length;i++){-->
+                <!--ary[i]=ary[i].replace(/(\d+)%/, function (a, b) {return +b / 100;});-->
+            <!--}-->
+            <!--var arr =[],len=0;-->
+            <!--len=Math.ceil(ary.length/7);-->
+            <!--for(var i = 0;i<len;i++){-->
+
+<!--//            if(i=len-1){-->
+<!--//-->
+<!--//            }else{-->
+<!--//                arr[i]=((ary[i*7]+ary[i*7+1]+ary[i*7+2]+ary[i*7+3]+ary[i*7+4]+ary[i*7+5]+ary[i*7+6])/7).toFixed(4)-->
+                <!--if(i<len-1){-->
+                    <!--arr[i]=((Number(ary[i*7])+Number(ary[i*7+1])+Number(ary[i*7+2])+Number(ary[i*7+3])+Number(ary[i*7+4])+Number(ary[i*7]+5)+Number(ary[i*7+6]))/7).toFixed(4)-->
+                <!--}else{-->
+                    <!--arr[i]=((Number(ary[i*7])+Number(ary[i*7+1]))/2).toFixed(4)-->
+                <!--}-->
+<!--//       }-->
+            <!--}-->
+            <!--var data = {-->
+                <!--labels : ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"],-->
+                <!--datasets : [-->
+                    <!--{-->
+                        <!--fillColor : "rgba(220,220,220,0.5)",-->
+                        <!--strokeColor : "rgba(220,220,220,1)",-->
+                        <!--pointColor : "rgba(220,220,220,1)",-->
+                        <!--pointStrokeColor : "#fff",-->
+                        <!--data : ary-->
+                    <!--}-->
+                <!--]-->
+            <!--};-->
+
+            <!--var data2 = {-->
+                <!--labels : ["第一周","第二周","第三周","第四周","第五周"],-->
+                <!--datasets : [-->
+                    <!--{-->
+                        <!--fillColor : "rgba(220,220,220,0.5)",-->
+                        <!--strokeColor : "rgba(220,220,220,1)",-->
+                        <!--pointColor : "rgba(220,220,220,1)",-->
+                        <!--pointStrokeColor : "#fff",-->
+                        <!--data : arr-->
+                    <!--}-->
+                <!--]-->
+            <!--};-->
+            <!--var defaults = {-->
+                <!--// 刻度是否显示标签, 即Y轴上是否显示文字-->
+                <!--scaleShowLabels : true,-->
+                <!--// Y轴上的刻度,即文字-->
+                <!--scaleLabel : "<%=value*100%>%",-->
+                <!--// 字体-->
+                <!--scaleFontFamily : "'Arial'",-->
+                <!--// 文字大小-->
+                <!--scaleFontSize : 12,-->
+<!--//        axisLabel:{formatter:'{value}%'}-->
+            <!--}-->
+            <!--var ctx = $("#myChart").get(0).getContext("2d");-->
+            <!--var myNewChart = new Chart(ctx).Line(data,defaults);-->
+            <!--var ctx2 = $("#myChart2").get(0).getContext("2d");-->
+            <!--var myNewChart2 = new Chart(ctx2).Line(data2,defaults);-->
+        <!--}-->
+        <!--return{-->
+            <!--init:function(){-->
+                <!--select()-->
+                <!--$.ajax({-->
+                    <!--url:'getList',-->
+                    <!--type:'GET',-->
+                    <!--dateType:'json',-->
+                    <!--success:function(date,err){-->
+                        <!--var ary = date;-->
+                        <!--bindList(ary)-->
+                    <!--}-->
+                <!--})-->
+            <!--}-->
+        <!--}-->
+    <!--})()-->
+<!--change.init()-->
+<!--</script>-->
+</body>
+</html>
